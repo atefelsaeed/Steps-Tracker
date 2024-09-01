@@ -39,26 +39,19 @@ class UserModel {
       weight: map['weight'] as double,
       createdAt: parsedCreatedAt,
     );
-
   }
 
-  Map<String, dynamic> toMap(
-      {bool forFirestore = false, bool forLocalStorage = false}) {
+  Map<String, dynamic> toMap({
+    bool forFirestore = false,
+    bool forLocalStorage = false,
+  }) {
     return {
       'uid': uid,
       'userName': name,
       'profileImage': profileImage,
       'totalSteps': totalSteps,
       'weight': weight,
-      'createdAt': forFirestore
-          ? FieldValue.serverTimestamp()
-          : (
-              forLocalStorage
-                  ? createdAt?.toIso8601String()
-                  : createdAt != null
-                      ? Timestamp.fromDate(createdAt!)
-                      : null,
-            ),
+      'createdAt': createdAt!.toIso8601String(),
     };
   }
 

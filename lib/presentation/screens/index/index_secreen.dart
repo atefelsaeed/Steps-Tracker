@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:steps_counter/generated/l10n.dart';
-import 'package:steps_counter/presentation/screens/home_screen/step_counter.dart';
+import 'package:steps_counter/presentation/screens/home_screen/home_screen.dart';
 import 'package:steps_counter/presentation/screens/settings/settings.dart';
 import 'package:steps_counter/presentation/screens/steps_history_screen/steps_history_screen.dart';
 import 'package:steps_counter/presentation/screens/weight_history_screen/weight_history_screen.dart';
@@ -12,7 +12,7 @@ class BottomNavbar extends StatelessWidget {
 
   List<PersistentTabConfig> _tabs(BuildContext context) => [
         PersistentTabConfig(
-          screen: const StepCounterScreen(),
+          screen: const HomeScreen(),
           item: ItemConfig(
             icon: const Icon(Icons.home),
             title: (S.current.home),
@@ -51,12 +51,7 @@ class BottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, size.height * 0.06),
-        child: Container(),
-      ),
       body: SafeArea(
         child: PersistentTabView(
           tabs: _tabs(context),
@@ -65,7 +60,7 @@ class BottomNavbar extends StatelessWidget {
           resizeToAvoidBottomInset: true,
           stateManagement: true,
           popAllScreensOnTapOfSelectedTab: true,
-          popActionScreens: PopActionScreensType.all,
+          popActionScreens: PopActionScreensType.once,
           screenTransitionAnimation: const ScreenTransitionAnimation(
             curve: Curves.ease,
             duration: Duration(milliseconds: 200),
@@ -73,6 +68,7 @@ class BottomNavbar extends StatelessWidget {
           navBarBuilder: (navBarConfig) => Style1BottomNavBar(
             navBarConfig: navBarConfig,
           ),
+
         ),
       ),
     );

@@ -33,5 +33,6 @@
   "user_profile": "User Profile",
   "update_weight": "Update Weight",
   "profile_image_uploaded_successfully": "Profile image updated successfully!",
+  "weight_uploaded_successfully": "Weight updated successfully!",
   "profile_image_uploaded_error": "Error updated Profile image!"
 }

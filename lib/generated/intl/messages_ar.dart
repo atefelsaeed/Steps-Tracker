@@ -71,6 +71,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "هل أنت متأكد أنك تريد تسجيل الخروج؟"),
         "weight": MessageLookupByLibrary.simpleMessage("الوزن"),
         "weight_history": MessageLookupByLibrary.simpleMessage("سجل الوزن"),
-        "weight_list": MessageLookupByLibrary.simpleMessage("الاوزان")
+        "weight_list": MessageLookupByLibrary.simpleMessage("الاوزان"),
+        "weight_uploaded_successfully":
+            MessageLookupByLibrary.simpleMessage("تم تحديث الوزن بنجاح!")
       };
 }

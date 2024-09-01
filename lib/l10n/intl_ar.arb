@@ -33,5 +33,6 @@
   "user_profile": "الملف الشخصي",
   "update_weight": "تحديث الوزن",
   "profile_image_uploaded_successfully": "تم تحديث صورة الملف الشخصي بنجاح!",
-  "profile_image_uploaded_error": "حدث خطأ أثناء تحديث صورة الملف الشخصي!"
+  "profile_image_uploaded_error": "حدث خطأ أثناء تحديث صورة الملف الشخصي!",
+  "weight_uploaded_successfully": "تم تحديث الوزن بنجاح!"
 }

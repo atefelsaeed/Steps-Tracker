@@ -23,6 +23,9 @@ class MainTheme {
           fontWeight: FontWeight.w700,
           fontSize: 18,
         ),
+        iconTheme: const IconThemeData(
+          color: AppColors.kScaffoldBackgroundColor,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
           fillColor: AppColors.kScaffoldBackgroundColor,
@@ -94,16 +97,18 @@ class MainTheme {
         textColor: AppColors.kScaffoldBackgroundColor,
       ),
       cardColor: Colors.grey,
-      appBarTheme:  AppBarTheme(
-        elevation: 0,
-        backgroundColor: AppColors.kScaffoldBackgroundColor,
-        centerTitle: true,
-        titleTextStyle: TextStyle(
-          color: AppColors.kPrimaryColor,
-          fontWeight: FontWeight.w700,
-          fontSize: 18,
-        ),
-      ),
+      appBarTheme: AppBarTheme(
+          elevation: 0,
+          backgroundColor: AppColors.kScaffoldBackgroundColor,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            color: AppColors.kPrimaryColor,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+          iconTheme: IconThemeData(
+            color: AppColors.kPrimaryColor,
+          )),
       inputDecorationTheme: InputDecorationTheme(
         fillColor: AppColors.kScaffoldBackgroundColor,
         filled: true,

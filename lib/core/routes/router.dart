@@ -7,7 +7,7 @@ import 'package:steps_counter/presentation/screens/splash_screen/splash_screen.d
 
 Route<dynamic> onGenerate(RouteSettings settings) {
   switch (settings.name) {
-    case AppRoutes.landingPageRoute:
+    case AppRoutes.splashPageRoute:
       return CupertinoPageRoute(
         builder: (_) => const SplashScreen(),
         settings: settings,

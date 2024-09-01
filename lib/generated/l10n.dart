@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -385,6 +386,16 @@ class S {
     return Intl.message(
       'Profile image updated successfully!',
       name: 'profile_image_uploaded_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight updated successfully!`
+  String get weight_uploaded_successfully {
+    return Intl.message(
+      'Weight updated successfully!',
+      name: 'weight_uploaded_successfully',
       desc: '',
       args: [],
     );

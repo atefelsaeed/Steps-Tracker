@@ -1,22 +1,15 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-
+import 'package:steps_counter/core/utils/app_colors.dart';
 import 'package:steps_counter/data/models/user_model.dart';
-import 'package:steps_counter/data/data_source/data_storage.dart';
-import 'package:steps_counter/core/utils/key_constant.dart';
-import 'package:steps_counter/domain/auth_service/auth_service.dart';
-import 'package:steps_counter/data/data_source/auth_data_source.dart';
+import 'package:steps_counter/domain/auth_service/user_profile_notifier.dart';
 import 'package:steps_counter/generated/l10n.dart';
 import 'package:steps_counter/presentation/widgets/default_text_form_field.dart';
 import 'package:steps_counter/presentation/widgets/show_toast.dart';
 
-// Updated Profile Screen
 class UserProfileScreen extends ConsumerStatefulWidget {
   const UserProfileScreen({super.key});
 
@@ -37,51 +30,29 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   }
 
   Future<void> _loadUserProfile() async {
-    final authService = AuthService();
+    final userState = ref.read(userProfileProvider);
 
-    // Check if user data exists locally first
-    final userData = await DataStorage.readData(KeyConstants.currentUser);
-    if (userData != null) {
-      var data = jsonDecode(userData);
-      setState(() {
-        _currentUser = UserModel.fromMap(data, data['uid']);
-        _weightController.text = _currentUser?.weight.toString() ?? '';
-        _imageUrl = _currentUser?.profileImage;
-      });
-    } else {
-      // If not available locally, fetch from Firestore
-      final firebaseUser = authService.getCurrentUser();
-      if (firebaseUser != null) {
-        final userMap = await authService.getUserData();
-        if (userMap != null) {
-          setState(() {
-            _currentUser = UserModel.fromMap(userMap, firebaseUser.uid);
-            _weightController.text = _currentUser?.weight.toString() ?? '';
-            _imageUrl = _currentUser?.profileImage;
-          });
-        }
-      }
-    }
+    userState.when(
+      data: (user) {
+        setState(() {
+          _currentUser = user;
+          _weightController.text = user?.weight.toString() ?? '';
+          _imageUrl = user?.profileImage;
+        });
+      },
+      loading: () => debugPrint('Loading user data...'),
+      error: (e, _) => debugPrint('Error loading user data: $e'),
+    );
   }
 
   Future<void> _updateWeight() async {
-    if (_currentUser == null) return;
-
-    // Update weight in Firestore
     final newWeight = double.tryParse(_weightController.text);
     if (newWeight != null) {
-      _currentUser = _currentUser!.copyWith(weight: newWeight);
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_currentUser!.uid)
-          .update({
-        'weight': newWeight,
-      });
-      // Update locally stored data as well
-      AuthLocalDataSource().persistAuth(_currentUser!);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Weight updated successfully!')),
+      await ref.read(userProfileProvider.notifier).updateWeight(newWeight);
+      ToastService.showCustomSnakeBar(
+        context: context,
+        msg: S.current.weight_uploaded_successfully,
+        isSuccess: true,
       );
     }
   }
@@ -100,30 +71,12 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   }
 
   Future<void> _uploadImage() async {
-    // Upload image to Firebase Storage and update Firestore
     if (_profileImage == null || _currentUser == null) return;
 
-    final storageRef = FirebaseStorage.instance
-        .ref()
-        .child('profile_images/${_currentUser!.uid}.jpg');
-    await storageRef.putFile(_profileImage!);
-    final imageUrl = await storageRef.getDownloadURL();
-
-    // Update profile image URL in Firestore and local storage
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(_currentUser!.uid)
-        .update({
-      'profileImage': imageUrl,
-    });
-
-    setState(() {
-      _imageUrl = imageUrl;
-      _currentUser = _currentUser!.copyWith(profileImage: imageUrl);
-    });
-
-    // Update locally stored data as well
-    AuthLocalDataSource().persistAuth(_currentUser!);
+    await ref.read(userProfileProvider.notifier).updateProfileImage(
+          _profileImage!,
+          _currentUser!.uid,
+        );
 
     ToastService.showCustomSnakeBar(
       context: context,
@@ -134,6 +87,16 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<UserModel?>>(userProfileProvider, (previous, next) {
+      if (next is AsyncData && next.value != null) {
+        setState(() {
+          _currentUser = next.value;
+          _weightController.text = _currentUser?.weight.toString() ?? '';
+          _imageUrl = _currentUser?.profileImage;
+        });
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(S.current.user_profile),
@@ -141,39 +104,90 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
               child: GestureDetector(
                 onTap: _pickImage,
-                child: CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  radius: 60,
-                  backgroundImage:
-                      _imageUrl != null ? NetworkImage(_imageUrl!) : null,
-                  child: _imageUrl == null
-                      ? const Icon(Icons.camera_alt, size: 40)
-                      : null,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      radius: 60,
+                      backgroundImage:
+                          _imageUrl != null ? NetworkImage(_imageUrl!) : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        margin: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.camera_alt,
+                          size: 30,
+                          color: AppColors.kPrimaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            Text(_currentUser?.name ?? ""),
+            Text(
+              _currentUser?.name ?? "",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DefaultTextFormField(
-                  controller: _weightController,
-                  errorMsg: S.of(context).enter_your_weight,
-                  hintText: S.of(context).enter_your_weight,
-                  inputAction: TextInputAction.done,
-                  inputType: TextInputType.number,
+                Expanded(
+                  child: DefaultTextFormField(
+                    controller: _weightController,
+                    errorMsg: S.of(context).enter_your_weight,
+                    hintText: S.of(context).enter_your_weight,
+                    inputAction: TextInputAction.done,
+                    inputType: TextInputType.number,
+                  ),
                 ),
                 const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: _updateWeight,
-                  child: Text(S.current.update_weight),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _updateWeight,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 18.0, horizontal: 10),
+                      child: Text(
+                        S.current.update_weight,
+                        style: const TextStyle(
+                          color: AppColors.kScaffoldBackgroundColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             )

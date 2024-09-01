@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:steps_counter/data/models/user_model.dart';
 import 'package:steps_counter/generated/l10n.dart';
 
@@ -24,6 +25,7 @@ class WeightEntriesScreen extends StatelessWidget {
           }
 
           final docs = snapshot.data!.docs;
+          DateFormat formatter = DateFormat('yyyy-MM-dd h:mm a');
 
           return ListView.builder(
             itemCount: docs.length,
@@ -34,12 +36,25 @@ class WeightEntriesScreen extends StatelessWidget {
                 docs[index].id,
               );
 
-              return ListTile(
-                title: Text(userModel.name),
-                subtitle: Text(
-                  '${S.current.weight}: ${userModel.weight} ${S.current.kg}',
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  elevation: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(userModel.name),
+                        Text(
+                          '${S.current.weight}: ${userModel.weight} ${S.current.kg}',
+                        ),
+                        Text(
+                            '${S.current.date}: ${formatter.format(userModel.createdAt ?? DateTime.now())}'),
+                      ],
+                    ),
+                  ),
                 ),
-                trailing: Text(userModel.createdAt?.toString() ?? ''),
               );
             },
           );

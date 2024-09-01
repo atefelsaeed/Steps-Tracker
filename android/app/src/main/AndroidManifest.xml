@@ -13,6 +13,9 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:label="Steps Tracker">
+        <service
+            android:name="id.flutter.flutter_background_service.BackgroundService"
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".MainActivity"
@@ -21,6 +24,7 @@
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
+            android:enableOnBackInvokedCallback="true
             android:windowSoftInputMode="adjustResize">
 
             <meta-data
@@ -32,24 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Background Service Configuration -->
-        <service
-            android:name="id.flutter.flutter_background_service.BackgroundService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:foregroundServiceType="location" />
-
-        <!-- Restart Service on Boot -->
-        <receiver
-            android:name=".BootReceiver"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
 
         <!-- Google Play Services Version -->
         <meta-data

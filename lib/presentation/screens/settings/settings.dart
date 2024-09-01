@@ -68,7 +68,7 @@ class AppSettings extends ConsumerWidget {
                 },
               ),
               const SizedBox(height: 10),
-              const Divider(),
+              const Divider(thickness: 2,),
               const SizedBox(height: 10),
               ItemSetting(
                 iconData: Icons.exit_to_app,

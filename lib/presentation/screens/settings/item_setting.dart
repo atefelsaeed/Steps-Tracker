@@ -18,7 +18,7 @@ class ItemSetting extends StatelessWidget {
       onTap: () => callback(),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),

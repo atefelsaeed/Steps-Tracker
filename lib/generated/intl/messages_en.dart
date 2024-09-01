@@ -72,6 +72,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "weight": MessageLookupByLibrary.simpleMessage("weight"),
         "weight_history":
             MessageLookupByLibrary.simpleMessage("Weight History"),
-        "weight_list": MessageLookupByLibrary.simpleMessage("Weights")
+        "weight_list": MessageLookupByLibrary.simpleMessage("Weights"),
+        "weight_uploaded_successfully":
+            MessageLookupByLibrary.simpleMessage("Weight updated successfully!")
       };
 }

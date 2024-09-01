@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:steps_counter/core/routes/routes.dart';
 import 'package:steps_counter/core/utils/app_assets.dart';
@@ -108,10 +109,12 @@ class LoginScreen extends ConsumerWidget {
                                     if (user != null) {
                                       debugPrint(
                                           "Signed in anonymously as: ${user.uid}");
+                                      //Starting the background service.
+                                      FlutterBackgroundService().startService();
                                       ToastService.showCustomSnakeBar(
                                         context: context,
                                         msg: S.current.login_success,
-                                        isSuccess: false,
+                                        isSuccess: true,
                                       );
                                       Navigator.of(context)
                                           .pushReplacementNamed(

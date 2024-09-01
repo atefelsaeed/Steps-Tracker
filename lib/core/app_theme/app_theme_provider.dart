@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:steps_counter/core/app_theme/app_theme_enum.dart';
+import 'package:steps_counter/core/utils/key_constant.dart';
+import 'package:steps_counter/data/data_source/data_storage.dart';
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, AppThemeMode>((ref) {
   return ThemeNotifier();
@@ -12,8 +13,7 @@ class ThemeNotifier extends StateNotifier<AppThemeMode> {
   }
 
   Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final theme = prefs.getString('theme') ?? 'light';
+    final theme = await DataStorage.readData(KeyConstants.theme) ?? 'light';
     if (theme == 'dark') {
       state = AppThemeMode.dark;
     } else {
@@ -32,7 +32,6 @@ class ThemeNotifier extends StateNotifier<AppThemeMode> {
   }
 
   Future<void> _saveTheme(String theme) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('theme', theme);
+    await DataStorage.writeData(KeyConstants.theme, theme);
   }
 }
