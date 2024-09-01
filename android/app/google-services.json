@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "12408079476",
+    "firebase_url": "https://steps-tracker-e3065-default-rtdb.firebaseio.com",
+    "project_id": "steps-tracker-e3065",
+    "storage_bucket": "steps-tracker-e3065.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12408079476:android:7df6822c664f2f891e3d21",
+        "android_client_info": {
+          "package_name": "com.example.step_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoOI3wQciDRR_ElKqFd5etGFlBfFWiJf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
